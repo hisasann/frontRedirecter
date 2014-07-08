@@ -69,7 +69,6 @@
       }
       return;
     }
-    console.log(1);
     if (cookieLang) {
       if (cookieLang === urlLang) {
         if (urlLang === DEFAULT_LANGUAGE) {

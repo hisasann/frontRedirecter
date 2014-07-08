@@ -67,7 +67,6 @@
       redirectPage [prefix, '/', page].join('')
     return
 
-  console.log 1
   # クッキーあり
   if cookieLang
     # すでに当該のURLにいる場合
