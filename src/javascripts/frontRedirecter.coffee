@@ -10,10 +10,12 @@
   DEFAULT_LANGUAGE = 'en'
   COOKIE_NAME = 'language'
   prefix = ''
+  EXPRESSION = /en|ja|zh|zh-TW/
 
   getUserLanguage = () ->
     try
       return (navigator.browserLanguage or navigator.language or navigator.userLanguage).substr(0, 2)
+#      return 'it'
     catch e
       return ''
     return
@@ -59,6 +61,13 @@
   console.log 'page: ', page
   console.log 'cookieLang: ', cookieLang
 
+  # 指定言語以外の言語でアクセスされた場合
+  if !EXPRESSION.test userLang
+    if urlLang
+      redirectPage [prefix, '/', page].join('')
+    return
+
+  console.log 1
   # クッキーあり
   if cookieLang
     # すでに当該のURLにいる場合

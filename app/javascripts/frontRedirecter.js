@@ -8,10 +8,11 @@
 
 (function() {
   (function($) {
-    var COOKIE_NAME, DEFAULT_LANGUAGE, cookieLang, getPage, getUrlLanguage, getUserLanguage, page, prefix, redirectPage, referer, urlLang, userLang;
+    var COOKIE_NAME, DEFAULT_LANGUAGE, EXPRESSION, cookieLang, getPage, getUrlLanguage, getUserLanguage, page, prefix, redirectPage, referer, urlLang, userLang;
     DEFAULT_LANGUAGE = 'en';
     COOKIE_NAME = 'language';
     prefix = '';
+    EXPRESSION = /en|ja|zh|zh-TW/;
     getUserLanguage = function() {
       var e;
       try {
@@ -62,6 +63,13 @@
     console.log('urlLang: ', urlLang);
     console.log('page: ', page);
     console.log('cookieLang: ', cookieLang);
+    if (!EXPRESSION.test(userLang)) {
+      if (urlLang) {
+        redirectPage([prefix, '/', page].join(''));
+      }
+      return;
+    }
+    console.log(1);
     if (cookieLang) {
       if (cookieLang === urlLang) {
         if (urlLang === DEFAULT_LANGUAGE) {
