@@ -16,7 +16,7 @@
     getUserLanguage = function() {
       var e;
       try {
-        return (navigator.browserLanguage || navigator.language || navigator.userLanguage).substr(0, 2);
+        return (navigator.browserLanguage || navigator.language || navigator.userLanguage).substr(0, 5);
       } catch (_error) {
         e = _error;
         return '';
@@ -27,7 +27,7 @@
       urlExpression = /^http(s)?:\/\/([\w-]+\.?)+[\w-]+(:[0-9]+)?\/(en|ja|zh|zh-TW)+\/?.*$/i;
       url = location.href;
       try {
-        return url.match(urlExpression)[4].substr(0, 2);
+        return url.match(urlExpression)[4].substr(0, 5);
       } catch (_error) {
         e = _error;
         return '';

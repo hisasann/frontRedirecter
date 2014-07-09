@@ -14,7 +14,7 @@
 
   getUserLanguage = () ->
     try
-      return (navigator.browserLanguage or navigator.language or navigator.userLanguage).substr(0, 2)
+      return (navigator.browserLanguage or navigator.language or navigator.userLanguage).substr(0, 5)
 #      return 'it'
     catch e
       return ''
@@ -24,7 +24,7 @@
     urlExpression = /^http(s)?:\/\/([\w-]+\.?)+[\w-]+(:[0-9]+)?\/(en|ja|zh|zh-TW)+\/?.*$/i
     url = location.href
     try
-      return url.match(urlExpression)[4].substr(0, 2)
+      return url.match(urlExpression)[4].substr(0, 5)
     catch e
       return ''
     return
