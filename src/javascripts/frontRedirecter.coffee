@@ -7,30 +7,39 @@
 # via http://qiita.com/Evolutor_web/items/ec602b8292d2051ca031
 # http://qiita.com/makoto_kw/items/9d1af5855012a2a7278d
 (($) ->
+  # http://localhost:4567/zh-TW/
   DEFAULT_LANGUAGE = 'en'
   COOKIE_NAME = 'language'
   prefix = ''
-  EXPRESSION = /en|ja|zh|zh-TW/
+  EXPRESSION = /en|ja|zh\-TW|zh/i
 
   getUserLanguage = () ->
     try
-      return (navigator.browserLanguage or navigator.language or navigator.userLanguage).substr(0, 5)
-#      return 'it'
+      lang = (navigator.browserLanguage or navigator.language or navigator.userLanguage).substr(0, 5)
+#      lang = 'zh-TW'
+      if lang.indexOf('zh') isnt 0
+        lang = lang.substr(0, 2)
+
+      return lang
     catch e
       return ''
     return
 
   getUrlLanguage = () ->
-    urlExpression = /^http(s)?:\/\/([\w-]+\.?)+[\w-]+(:[0-9]+)?\/(en|ja|zh|zh-TW)+\/?.*$/i
+    urlExpression = /^http(s)?:\/\/([\w-]+\.?)+[\w-]+(:[0-9]+)?\/(en|ja|zh\-TW|zh)+\/?.*$/i
     url = location.href
     try
-      return url.match(urlExpression)[4].substr(0, 5)
+      lang = url.match(urlExpression)[4].substr(0, 5)
+      if lang.indexOf('zh') isnt 0
+        lang = lang.substr(0, 2)
+
+      return lang
     catch e
       return ''
     return
 
   getPage = () ->
-    urlExpression = /^http(s)?:\/\/([\w-]+\.?)+[\w-]+(:[0-9]+)?\/((en|ja|zh|zh-TW)\/)?(.*)$/i
+    urlExpression = /^http(s)?:\/\/([\w-]+\.?)+[\w-]+(:[0-9]+)?\/((en|ja|zh\-TW|zh)\/)?(.*)$/i
     url = location.href
     try
       return url.match(urlExpression)[6]
@@ -56,10 +65,10 @@
   urlLang = getUrlLanguage()
   page = getPage()
   cookieLang = $.cookie COOKIE_NAME
-  console.log 'lang: ', userLang
-  console.log 'urlLang: ', urlLang
-  console.log 'page: ', page
-  console.log 'cookieLang: ', cookieLang
+#  console.log 'lang: '+ userLang
+#  console.log 'urlLang: '+ urlLang
+#  console.log 'page: '+ page
+#  console.log 'cookieLang: '+ cookieLang
 
   # 指定言語以外の言語でアクセスされた場合
   if !EXPRESSION.test userLang
@@ -73,7 +82,9 @@
     if cookieLang is urlLang
       if urlLang is DEFAULT_LANGUAGE
         redirectPage [prefix, '/'].join('')
-
+      return
+    else
+      redirectPage [prefix, '/', cookieLang, '/'].join('')
       return
 
     if cookieLang is DEFAULT_LANGUAGE

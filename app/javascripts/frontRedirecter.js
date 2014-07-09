@@ -12,22 +12,30 @@
     DEFAULT_LANGUAGE = 'en';
     COOKIE_NAME = 'language';
     prefix = '';
-    EXPRESSION = /en|ja|zh|zh-TW/;
+    EXPRESSION = /en|ja|zh\-TW|zh/i;
     getUserLanguage = function() {
-      var e;
+      var e, lang;
       try {
-        return (navigator.browserLanguage || navigator.language || navigator.userLanguage).substr(0, 5);
+        lang = (navigator.browserLanguage || navigator.language || navigator.userLanguage).substr(0, 5);
+        if (lang.indexOf('zh') !== 0) {
+          lang = lang.substr(0, 2);
+        }
+        return lang;
       } catch (_error) {
         e = _error;
         return '';
       }
     };
     getUrlLanguage = function() {
-      var e, url, urlExpression;
-      urlExpression = /^http(s)?:\/\/([\w-]+\.?)+[\w-]+(:[0-9]+)?\/(en|ja|zh|zh-TW)+\/?.*$/i;
+      var e, lang, url, urlExpression;
+      urlExpression = /^http(s)?:\/\/([\w-]+\.?)+[\w-]+(:[0-9]+)?\/(en|ja|zh\-TW|zh)+\/?.*$/i;
       url = location.href;
       try {
-        return url.match(urlExpression)[4].substr(0, 5);
+        lang = url.match(urlExpression)[4].substr(0, 5);
+        if (lang.indexOf('zh') !== 0) {
+          lang = lang.substr(0, 2);
+        }
+        return lang;
       } catch (_error) {
         e = _error;
         return '';
@@ -35,7 +43,7 @@
     };
     getPage = function() {
       var e, url, urlExpression;
-      urlExpression = /^http(s)?:\/\/([\w-]+\.?)+[\w-]+(:[0-9]+)?\/((en|ja|zh|zh-TW)\/)?(.*)$/i;
+      urlExpression = /^http(s)?:\/\/([\w-]+\.?)+[\w-]+(:[0-9]+)?\/((en|ja|zh\-TW|zh)\/)?(.*)$/i;
       url = location.href;
       try {
         return url.match(urlExpression)[6];
@@ -59,10 +67,6 @@
     urlLang = getUrlLanguage();
     page = getPage();
     cookieLang = $.cookie(COOKIE_NAME);
-    console.log('lang: ', userLang);
-    console.log('urlLang: ', urlLang);
-    console.log('page: ', page);
-    console.log('cookieLang: ', cookieLang);
     if (!EXPRESSION.test(userLang)) {
       if (urlLang) {
         redirectPage([prefix, '/', page].join(''));
@@ -74,6 +78,9 @@
         if (urlLang === DEFAULT_LANGUAGE) {
           redirectPage([prefix, '/'].join(''));
         }
+        return;
+      } else {
+        redirectPage([prefix, '/', cookieLang, '/'].join(''));
         return;
       }
       if (cookieLang === DEFAULT_LANGUAGE) {
