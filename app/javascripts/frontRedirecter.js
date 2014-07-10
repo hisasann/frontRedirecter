@@ -17,7 +17,9 @@
       var e, lang;
       try {
         lang = (navigator.browserLanguage || navigator.language || navigator.userLanguage).substr(0, 5);
-        if (lang.indexOf('zh') !== 0) {
+        if (/zh-TW/i.test(lang)) {
+          lang = 'zh-TW';
+        } else {
           lang = lang.substr(0, 2);
         }
         return lang;
@@ -32,7 +34,9 @@
       url = location.href;
       try {
         lang = url.match(urlExpression)[4].substr(0, 5);
-        if (lang.indexOf('zh') !== 0) {
+        if (/zh-TW/i.test(lang)) {
+          lang = 'zh-TW';
+        } else {
           lang = lang.substr(0, 2);
         }
         return lang;
@@ -73,45 +77,13 @@
       }
       return;
     }
-    if (cookieLang) {
-      if (cookieLang === urlLang) {
-        if (urlLang === DEFAULT_LANGUAGE) {
-          redirectPage([prefix, '/'].join(''));
-        }
-        return;
-      } else {
-        redirectPage([prefix, '/', cookieLang, '/'].join(''));
-        return;
-      }
-      if (cookieLang === DEFAULT_LANGUAGE) {
-        if (urlLang) {
-          redirectPage([prefix, '/', page].join(''));
-        }
-      } else {
-        redirectPage([prefix, '/', userLang, '/', page].join(''));
-      }
-      return;
-    }
-    if (!cookieLang) {
-      $.cookie(COOKIE_NAME, userLang);
-      if (userLang === urlLang) {
-        if (urlLang === DEFAULT_LANGUAGE) {
-          redirectPage([prefix, '/'].join(''));
-        }
-        return;
-      }
+    if (userLang !== urlLang) {
       if (userLang === DEFAULT_LANGUAGE) {
         if (urlLang) {
           redirectPage([prefix, '/', page].join(''));
         }
       } else {
-        if (userLang === DEFAULT_LANGUAGE) {
-          if (page) {
-            redirectPage([prefix, '/', page].join(''));
-          }
-        } else {
-          redirectPage([prefix, '/', userLang, '/', page].join(''));
-        }
+        return redirectPage([prefix, '/', userLang, '/', page].join(''));
       }
     }
   })(jQuery);

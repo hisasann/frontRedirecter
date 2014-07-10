@@ -16,8 +16,10 @@
   getUserLanguage = () ->
     try
       lang = (navigator.browserLanguage or navigator.language or navigator.userLanguage).substr(0, 5)
-#      lang = 'zh-TW'
-      if lang.indexOf('zh') isnt 0
+#      lang = 'en'
+      if /zh-TW/i.test(lang)
+        lang = 'zh-TW'
+      else
         lang = lang.substr(0, 2)
 
       return lang
@@ -30,7 +32,9 @@
     url = location.href
     try
       lang = url.match(urlExpression)[4].substr(0, 5)
-      if lang.indexOf('zh') isnt 0
+      if /zh-TW/i.test(lang)
+        lang = 'zh-TW'
+      else
         lang = lang.substr(0, 2)
 
       return lang
@@ -76,46 +80,16 @@
       redirectPage [prefix, '/', page].join('')
     return
 
-  # クッキーあり
-  if cookieLang
-    # すでに当該のURLにいる場合
-    if cookieLang is urlLang
-      if urlLang is DEFAULT_LANGUAGE
-        redirectPage [prefix, '/'].join('')
-      return
-    else
-      redirectPage [prefix, '/', cookieLang, '/'].join('')
-      return
-
-    if cookieLang is DEFAULT_LANGUAGE
-      if urlLang
-        redirectPage [prefix, '/', page].join('')
-    else
-      redirectPage [prefix, '/', userLang, '/', page].join('')
-    return
-
-  # クッキーなし
-  if !cookieLang
-    $.cookie COOKIE_NAME, userLang
-
-    # すでに当該のURLにいる場合
-    if userLang is urlLang
-      if urlLang is DEFAULT_LANGUAGE
-        redirectPage [prefix, '/'].join('')
-
-      return
-
+  # userとurlが違う
+  if userLang isnt urlLang
     if userLang is DEFAULT_LANGUAGE
+      # userがデフォルトの場合
       if urlLang
+        # urlがある場合
         redirectPage [prefix, '/', page].join('')
-      return
+        return
     else
-      if userLang is DEFAULT_LANGUAGE
-        if page
-          redirectPage [prefix, '/', page].join('')
-      else
-        redirectPage [prefix, '/', userLang, '/', page].join('')
-
-      return
+      # userがデフォルトでない場合
+      redirectPage [prefix, '/', userLang, '/', page].join('')
 
 ) jQuery
