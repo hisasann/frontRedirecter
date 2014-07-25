@@ -10,7 +10,7 @@ gulp.task 'js', ->
   .pipe $.plumber()
     .pipe $.coffeelint
         max_line_length:
-          value: 120
+          value: 200
       .pipe $.coffeelint.reporter()
         .pipe $.coffee({bare: false}).on 'error', (err) ->
             console.log err
